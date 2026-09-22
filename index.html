@@ -1,763 +1,1170 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>金山小神童 · 一年级趣味打字大冒险</title>
-  <style>
-    :root {
-      --bg-gradient: linear-gradient(135deg, #A1C4FD 0%, #C2E9FB 100%);
-      --primary: #4A90E2;
-      --accent: #FF7043;
-      --success: #4CAF50;
-      --danger: #F44336;
-      --finger-pink: #FF69B4;
-      --finger-orange: #FFA726;
-      --finger-green: #66BB6A;
-      --finger-blue: #42A5F5;
-      --finger-purple: #AB47BC;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
-
-    body {
-      font-family: "PingFang SC", "Microsoft YaHei", "幼圆", sans-serif;
-      background: var(--bg-gradient);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 15px;
-      color: #333;
-    }
-
-    header {
-      width: 100%;
-      max-width: 1050px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 12px 24px;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      margin-bottom: 12px;
-    }
-
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo-icon {
-      font-size: 34px;
-    }
-
-    .title-group h1 {
-      font-size: 22px;
-      color: #2C3E50;
-      font-weight: 800;
-    }
-
-    .title-group p {
-      font-size: 13px;
-      color: #7F8C8D;
-    }
-
-    .stats-bar {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .stat-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #F0F4F8;
-      padding: 6px 14px;
-      border-radius: 12px;
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .stat-badge span.value {
-      font-size: 18px;
-      color: var(--primary);
-    }
-
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-      width: 100%;
-      max-width: 1050px;
-      flex-wrap: wrap;
-    }
-
-    .nav-btn {
-      flex: 1;
-      min-width: 160px;
-      background: #FFFFFF;
-      border: 2px solid #E2E8F0;
-      border-radius: 14px;
-      padding: 8px 12px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-
-    .nav-btn:hover {
-      transform: translateY(-2px);
-      border-color: var(--primary);
-    }
-
-    .nav-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: #2980B9;
-      box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
-    }
-
-    .game-card {
-      width: 100%;
-      max-width: 1050px;
-      background: rgba(255, 255, 255, 0.98);
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    }
-
-    .target-display-area {
-      width: 100%;
-      min-height: 140px;
-      background: #F8FAFC;
-      border: 3px dashed #CBD5E1;
-      border-radius: 18px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 12px;
-      padding: 10px;
-    }
-
-    .pinyin-box {
-      font-size: 24px;
-      color: #64748B;
-      font-weight: bold;
-      letter-spacing: 3px;
-      margin-bottom: 2px;
-      min-height: 30px;
-    }
-
-    .char-box {
-      font-size: 54px;
-      font-weight: 900;
-      color: #1E293B;
-      letter-spacing: 6px;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .typing-guide-box {
-      font-size: 18px;
-      background: #EFF6FF;
-      color: #1D4ED8;
-      padding: 5px 18px;
-      border-radius: 25px;
-      font-weight: 700;
-      border: 2px solid #BFDBFE;
-    }
-
-    .char-item.completed { color: var(--success); }
-    .char-item.current { color: var(--accent); text-decoration: underline wavy; }
-    .char-item.pending { color: #94A3B8; }
-
-    .finger-coach-bar {
-      width: 100%;
-      background: #FFFBEB;
-      border: 2px solid #FCD34D;
-      border-radius: 14px;
-      padding: 8px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-      font-size: 15px;
-      font-weight: bold;
-      color: #92400E;
-    }
-
-    .coach-finger-badge {
-      padding: 3px 12px;
-      border-radius: 16px;
-      color: white;
-      font-weight: 800;
-      margin: 0 4px;
-    }
-
-    .hands-wrapper {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      margin-bottom: 12px;
-      width: 100%;
-    }
-
-    .hand-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .hand-title {
-      font-size: 12px;
-      font-weight: 800;
-      color: #64748B;
-      margin-bottom: 4px;
-    }
-
-    .fingers-row {
-      display: flex;
-      gap: 6px;
-      align-items: flex-end;
-      height: 64px;
-      background: #F1F5F9;
-      padding: 6px 10px;
-      border-radius: 14px;
-      border: 2px solid #E2E8F0;
-    }
-
-    .finger-pillar {
-      width: 22px;
-      border-radius: 8px 8px 3px 3px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      padding-bottom: 4px;
-      color: white;
-      font-size: 9px;
-      font-weight: bold;
-      transition: all 0.2s;
-      position: relative;
-    }
-
-    .f-pinky { height: 38px; background: var(--finger-pink); }
-    .f-ring { height: 48px; background: var(--finger-orange); }
-    .f-middle { height: 56px; background: var(--finger-green); }
-    .f-index { height: 46px; background: var(--finger-blue); }
-    .f-thumb { height: 32px; width: 26px; background: var(--finger-purple); }
-
-    .finger-pillar.active-finger {
-      transform: translateY(-6px) scale(1.12);
-      box-shadow: 0 0 12px currentColor;
-      filter: brightness(1.2);
-    }
-
-    .finger-pillar.active-finger::after {
-      content: "👇";
-      position: absolute;
-      top: -18px;
-      font-size: 12px;
-    }
-
-    .keyboard-container {
-      width: 100%;
-      max-width: 860px;
-      background: #1E293B;
-      padding: 14px;
-      border-radius: 16px;
-      box-shadow: inset 0 3px 6px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .kb-row {
-      display: flex;
-      justify-content: center;
-      gap: 5px;
-    }
-
-    .key {
-      min-width: 44px;
-      height: 46px;
-      border-radius: 7px;
-      background: #334155;
-      color: #F8FAFC;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      font-weight: 800;
-      position: relative;
-      cursor: pointer;
-      box-shadow: 0 3px 0 #0F172A;
-      transition: all 0.1s;
-    }
-
-    .key.bump::after {
-      content: "";
-      position: absolute;
-      bottom: 5px;
-      width: 10px;
-      height: 2px;
-      background: #CBD5E1;
-      border-radius: 2px;
-    }
-
-    .k-pinky-l, .k-pinky-r { border-top: 4px solid var(--finger-pink); }
-    .k-ring-l, .k-ring-r   { border-top: 4px solid var(--finger-orange); }
-    .k-mid-l, .k-mid-r     { border-top: 4px solid var(--finger-green); }
-    .k-idx-l, .k-idx-r     { border-top: 4px solid var(--finger-blue); }
-    .k-thumb               { border-top: 4px solid var(--finger-purple); }
-
-    .key.key-wide-15 { min-width: 65px; font-size: 12px; }
-    .key.key-wide-20 { min-width: 85px; font-size: 12px; }
-    .key.key-space { min-width: 300px; }
-
-    .key.target-key {
-      background: #F59E0B !important;
-      color: #FFFFFF !important;
-      box-shadow: 0 0 15px #F59E0B, 0 3px 0 #B45309 !important;
-      transform: translateY(-2px);
-    }
-
-    .key.pressed-correct {
-      background: #10B981 !important;
-      transform: translateY(3px);
-      box-shadow: 0 0 0 #0F172A !important;
-    }
-
-    .key.pressed-wrong {
-      background: #EF4444 !important;
-      animation: shake 0.2s;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
-    }
-
-    .balloon-stage {
-      width: 100%;
-      height: 260px;
-      background: linear-gradient(to bottom, #70C5F7 0%, #D8F3FE 100%);
-      border-radius: 14px;
-      position: relative;
-      overflow: hidden;
-      display: none;
-      margin-bottom: 12px;
-      border: 3px solid #38BDF8;
-    }
-
-    .balloon {
-      position: absolute;
-      width: 58px;
-      height: 72px;
-      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 900;
-      font-size: 18px;
-      box-shadow: inset -3px -3px 6px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.15);
-    }
-
-    .balloon::after {
-      content: "";
-      position: absolute;
-      bottom: -8px;
-      width: 2px;
-      height: 10px;
-      background: rgba(0,0,0,0.3);
-    }
-
-    .combo-toast {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      background: #FEF08A;
-      color: #854D0E;
-      padding: 6px 16px;
-      border-radius: 18px;
-      font-weight: 800;
-      font-size: 14px;
-      border: 2px solid #FACC15;
-      transform: scale(0);
-      transition: transform 0.2s;
-      z-index: 50;
-    }
-
-    .combo-toast.show { transform: scale(1); }
-
-    .instructions-footer {
-      margin-top: 12px;
-      font-size: 12px;
-      color: #475569;
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .finger-legend {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .legend-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <div class="logo-area">
-      <div class="logo-icon">👑</div>
-      <div class="title-group">
-        <h1>金山小神童 · 一年级趣味打字大冒险</h1>
-        <p>快乐学拼音 · 规范好指法 · 轻松识汉字</p>
-      </div>
-    </div>
-    <div class="stats-bar">
-      <div class="stat-badge">
-        <span>⭐ 得分:</span>
-        <span class="value" id="score-val">0</span>
-      </div>
-      <div class="stat-badge">
-        <span>🎯 正确率:</span>
-        <span class="value" id="acc-val">100%</span>
-      </div>
-      <div class="stat-badge">
-        <span>⚡ 速度:</span>
-        <span class="value" id="speed-val">0</span>
-        <small style="font-size:10px;color:#666;">字/分</small>
-      </div>
-      <div class="stat-badge" style="cursor:pointer;" id="sound-btn">
-        <span id="sound-icon">🔊 声音开</span>
-      </div>
-    </div>
-  </header>
-
-  <nav class="nav-tabs">
-    <button class="nav-btn active" onclick="switchMode(1)">🌟 第一阶：基准键位启蒙</button>
-    <button class="nav-btn" onclick="switchMode(2)">🚀 第二阶：26字母与声母韵母</button>
-    <button class="nav-btn" onclick="switchMode(3)">🍎 第三阶：拼音音节与趣味英文</button>
-    <button class="nav-btn" onclick="switchMode(4)">📖 第四阶：一年级汉字与词语</button>
-    <button class="nav-btn" onclick="switchMode(5)">🎈 第五阶：金山气球大作战</button>
-  </nav>
-
-  <main class="game-card">
-    <div class="combo-toast" id="combo-toast">🔥 连击 x5！打字小能手！</div>
-
-    <div class="balloon-stage" id="balloon-stage"></div>
-
-    <div class="target-display-area" id="target-display">
-      <div class="pinyin-box" id="pinyin-display"></div>
-      <div class="char-box" id="char-display">A</div>
-      <div class="typing-guide-box" id="guide-display">
-        👉 请击打字母：<strong id="target-char-hint">A</strong>
-      </div>
-    </div>
-
-    <div class="finger-coach-bar">
-      <div id="coach-text">
-        🎯 规范指法提示：请用 <span class="coach-finger-badge" id="coach-badge" style="background:var(--finger-pink)">左手小指</span> 轻敲键盘
-      </div>
-    </div>
-
-    <div class="hands-wrapper">
-      <div class="hand-container">
-        <div class="hand-title">🤚 左 手 (Left Hand)</div>
-        <div class="fingers-row" id="left-hand">
-          <div class="finger-pillar f-pinky" id="finger-lp" title="左手小指">小指</div>
-          <div class="finger-pillar f-ring" id="finger-lr" title="左手无名指">无名</div>
-          <div class="finger-pillar f-middle" id="finger-lm" title="左手中指">中指</div>
-          <div class="finger-pillar f-index" id="finger-li" title="左手食指">食指</div>
-          <div class="finger-pillar f-thumb" id="finger-lt" title="左手大拇指">拇指</div>
-        </div>
-      </div>
-
-      <div class="hand-container">
-        <div class="hand-title">✋ 右 手 (Right Hand)</div>
-        <div class="fingers-row" id="right-hand">
-          <div class="finger-pillar f-thumb" id="finger-rt" title="右手大拇指">拇指</div>
-          <div class="finger-pillar f-index" id="finger-ri" title="右手食指">食指</div>
-          <div class="finger-pillar f-middle" id="finger-rm" title="右手中指">中指</div>
-          <div class="finger-pillar f-ring" id="finger-rr" title="右手无名指">无名</div>
-          <div class="finger-pillar f-pinky" id="finger-rp" title="右手小指">小指</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="keyboard-container" id="virtual-keyboard">
-      <!-- 数字排 -->
-      <div class="kb-row">
-        <div class="key k-pinky-l" data-key="`">`</div>
-        <div class="key k-pinky-l" data-key="1">1</div>
-        <div class="key k-ring-l" data-key="2">2</div>
-        <div class="key k-mid-l" data-key="3">3</div>
-        <div class="key k-idx-l" data-key="4">4</div>
-        <div class="key k-idx-l" data-key="5">5</div>
-        <div class="key k-idx-r" data-key="6">6</div>
-        <div class="key k-idx-r" data-key="7">7</div>
-        <div class="key k-mid-r" data-key="8">8</div>
-        <div class="key k-ring-r" data-key="9">9</div>
-        <div class="key k-pinky-r" data-key="0">0</div>
-        <div class="key k-pinky-r" data-key="-">-</div>
-        <div class="key k-pinky-r" data-key="=">=</div>
-        <div class="key key-wide-15" data-key="Backspace">退格 ⌫</div>
-      </div>
-
-      <!-- QWERTY 排 -->
-      <div class="kb-row">
-        <div class="key key-wide-15" data-key="Tab">Tab</div>
-        <div class="key k-pinky-l" data-key="Q">Q</div>
-        <div class="key k-ring-l" data-key="W">W</div>
-        <div class="key k-mid-l" data-key="E">E</div>
-        <div class="key k-idx-l" data-key="R">R</div>
-        <div class="key k-idx-l" data-key="T">T</div>
-        <div class="key k-idx-r" data-key="Y">Y</div>
-        <div class="key k-idx-r" data-key="U">U</div>
-        <div class="key k-mid-r" data-key="I">I</div>
-        <div class="key k-ring-r" data-key="O">O</div>
-        <div class="key k-pinky-r" data-key="P">P</div>
-        <div class="key k-pinky-r" data-key="[">[</div>
-        <div class="key k-pinky-r" data-key="]">]</div>
-      </div>
-
-      <!-- 基准键排 (ASDF JKL;) -->
-      <div class="kb-row">
-        <div class="key key-wide-20" data-key="CapsLock">大写锁</div>
-        <div class="key k-pinky-l" data-key="A">A</div>
-        <div class="key k-ring-l" data-key="S">S</div>
-        <div class="key k-mid-l" data-key="D">D</div>
-        <div class="key k-idx-l bump" data-key="F">F</div>
-        <div class="key k-idx-l" data-key="G">G</div>
-        <div class="key k-idx-r" data-key="H">H</div>
-        <div class="key k-idx-r bump" data-key="J">J</div>
-        <div class="key k-mid-r" data-key="K">K</div>
-        <div class="key k-ring-r" data-key="L">L</div>
-        <div class="key k-pinky-r" data-key=";">;</div>
-        <div class="key key-wide-20" data-key="Enter">回车 ↵</div>
-      </div>
-
-      <!-- 底排 -->
-      <div class="kb-row">
-        <div class="key key-wide-20" data-key="ShiftLeft">Shift</div>
-        <div class="key k-pinky-l" data-key="Z">Z</div>
-        <div class="key k-ring-l" data-key="X">X</div>
-        <div class="key k-mid-l" data-key="C">C</div>
-        <div class="key k-idx-l" data-key="V">V</div>
-        <div class="key k-idx-l" data-key="B">B</div>
-        <div class="key k-idx-r" data-key="N">N</div>
-        <div class="key k-idx-r" data-key="M">M</div>
-        <div class="key k-mid-r" data-key=","><</div>
-        <div class="key k-ring-r" data-key=".">.</div>
-        <div class="key k-pinky-r" data-key="/">/</div>
-        <div class="key key-wide-20" data-key="ShiftRight">Shift</div>
-      </div>
-
-      <!-- 空格排 -->
-      <div class="kb-row">
-        <div class="key key-space k-thumb" data-key=" ">空格键 (Space)</div>
-      </div>
-    </div>
-
-    <div class="instructions-footer">
-      <div class="finger-legend"><span class="legend-dot" style="background:var(--finger-pink);"></span>粉色: 双手小指</div>
-      <div class="finger-legend"><span class="legend-dot" style="background:var(--finger-orange);"></span>橙色: 双手无名指</div>
-      <div class="finger-legend"><span class="legend-dot" style="background:var(--finger-green);"></span>绿色: 双手中指</div>
-      <div class="finger-legend"><span class="legend-dot" style="background:var(--finger-blue);"></span>蓝色: 双手食指</div>
-      <div class="finger-legend"><span class="legend-dot" style="background:var(--finger-purple);"></span>紫色: 大拇指(空格)</div>
-    </div>
-  </main>
-
-  <script>
-    class SoundFX {
-      constructor() {
-        this.ctx = null;
-        this.enabled = true;
-      }
-      init() {
-        if (!this.ctx) {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          this.ctx = new AudioContext();
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金山萌萌打字通 - 一年级打字乐园</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-kid: 'ZCOOL KuaiLe', 'Nunito', cursive, sans-serif;
         }
-      }
-      playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.15) {
-        if (!this.enabled) return;
-        this.init();
-        if (this.ctx.state === 'suspended') this.ctx.resume();
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-        gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + duration);
-      }
-      correct() {
-        this.playTone(659.25, 'sine', 0.12, 0.2);
-        setTimeout(() => this.playTone(783.99, 'sine', 0.18, 0.2), 60);
-      }
-      wrong() {
-        if (!this.enabled) return;
-        this.init();
-        if (this.ctx.state === 'suspended') this.ctx.resume();
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(180, this.ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(90, this.ctx.currentTime + 0.22);
-        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.22);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.22);
-      }
-      combo() {
-        [523.25, 659.25, 783.99, 1046.50].forEach((f, idx) => {
-          setTimeout(() => this.playTone(f, 'triangle', 0.14, 0.25), idx * 60);
+        body {
+            font-family: var(--font-kid);
+            user-select: none;
+            overflow-x: hidden;
+            background: linear-gradient(180deg, #7ad5f9 0%, #a2e8dd 55%, #88d47b 100%);
+            min-height: 100vh;
+        }
+
+        /* Keyboard Finger Zone Palette */
+        .finger-l-pinky   { background-color: #ffb3ba !important; border-color: #f77a87 !important; }
+        .finger-l-ring    { background-color: #ffdfba !important; border-color: #e5b67e !important; }
+        .finger-l-middle  { background-color: #ffffba !important; border-color: #d1d167 !important; }
+        .finger-l-index   { background-color: #baffc9 !important; border-color: #72db88 !important; }
+        .finger-r-index   { background-color: #bae1ff !important; border-color: #7cb8e8 !important; }
+        .finger-r-middle  { background-color: #d7baff !important; border-color: #ad7df0 !important; }
+        .finger-r-ring    { background-color: #ffbaf4 !important; border-color: #e27ad2 !important; }
+        .finger-r-pinky   { background-color: #ffd1dc !important; border-color: #fa8ea4 !important; }
+        .finger-thumb     { background-color: #e2e8f0 !important; border-color: #94a3b8 !important; }
+
+        /* Key states */
+        .key-cap {
+            transition: all 0.08s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.18);
+        }
+        .key-cap:active, .key-active {
+            transform: translateY(3px) scale(0.97);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.2) !important;
+            filter: brightness(0.92);
+        }
+        .key-target {
+            animation: pulse-ring 1s infinite alternate ease-in-out;
+            border-color: #ff3838 !important;
+            box-shadow: 0 0 15px #ff4757, 0 4px 0 #b33939 !important;
+            transform: scale(1.06);
+            z-index: 20;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(1.02); filter: drop-shadow(0 0 4px #ff4757); }
+            100% { transform: scale(1.09); filter: drop-shadow(0 0 12px #ff4757); }
+        }
+
+        /* Hand guide highlights */
+        .finger-active {
+            animation: finger-bounce 0.7s infinite alternate;
+            fill: #ff4757 !important;
+            stroke: #b33939 !important;
+            stroke-width: 2.5;
+            filter: drop-shadow(0px 0px 6px rgba(255, 71, 87, 0.8));
+        }
+        @keyframes finger-bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-4px); }
+        }
+
+        /* Cartoon Clouds */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.75);
+            border-radius: 999px;
+            filter: blur(0.5px);
+            animation: cloudFloat linear infinite;
+        }
+        @keyframes cloudFloat {
+            0% { transform: translateX(-150px); }
+            100% { transform: translateX(110vw); }
+        }
+
+        /* Cute balloon / Apple bounce */
+        .target-bubble {
+            animation: floatBubble 3s ease-in-out infinite alternate;
+        }
+        @keyframes floatBubble {
+            0% { transform: translateY(0px) rotate(-1deg); }
+            100% { transform: translateY(-8px) rotate(1.5deg); }
+        }
+
+        /* Custom 3D buttons */
+        .btn-cartoon {
+            transition: all 0.1s ease;
+            box-shadow: 0 5px 0 rgba(0, 0, 0, 0.2);
+        }
+        .btn-cartoon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 rgba(0, 0, 0, 0.2);
+        }
+        .btn-cartoon:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        /* Shake effect for errors */
+        .shake-screen {
+            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        /* Floating pop text effect */
+        .pop-text {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUpFade 0.75s ease-out forwards;
+            font-weight: 900;
+        }
+        @keyframes floatUpFade {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1.4); }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 relative select-none">
+
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="cloud w-36 h-12 top-6 opacity-70" style="animation-duration: 48s; animation-delay: 0s;"></div>
+        <div class="cloud w-56 h-16 top-20 opacity-60" style="animation-duration: 65s; animation-delay: -20s;"></div>
+        <div class="cloud w-44 h-14 top-40 opacity-75" style="animation-duration: 52s; animation-delay: -35s;"></div>
+        <!-- Distant rainbow -->
+        <div class="absolute -top-32 -right-20 w-96 h-96 rounded-full border-[18px] border-pink-300/40 border-t-yellow-300/40 border-l-cyan-300/40 pointer-events-none"></div>
+    </div>
+
+    <header class="relative z-10 px-4 py-2.5 flex items-center justify-between max-w-6xl mx-auto w-full">
+        <!-- Logo / Title -->
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-amber-400 rounded-2xl flex items-center justify-center border-4 border-amber-600 shadow-md text-2xl rotate-[-4deg]">
+                🍎
+            </div>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-amber-900 tracking-wider drop-shadow-sm flex items-center gap-2">
+                    金山萌萌打字通
+                    <span class="text-xs bg-red-500 text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-normal">一年级版</span>
+                </h1>
+                <p class="text-xs md:text-sm text-sky-950 font-bold opacity-80">拼音 · 汉字 · 萌萌英文 · 规范指法</p>
+            </div>
+        </div>
+
+        <!-- Mode Indicator & Action Buttons -->
+        <div class="flex items-center gap-2 md:gap-3">
+            <button id="btnSound" class="btn-cartoon bg-white text-emerald-600 border-2 border-emerald-400 rounded-xl px-3 py-1.5 font-bold text-sm flex items-center gap-1.5 hover:bg-emerald-50">
+                <i class="fas fa-volume-up"></i>
+                <span class="hidden sm:inline">音效: 开</span>
+            </button>
+            <button id="btnHelp" class="btn-cartoon bg-amber-400 text-amber-950 border-2 border-amber-600 rounded-xl px-3 py-1.5 font-bold text-sm flex items-center gap-1.5 hover:bg-amber-300">
+                <i class="fas fa-hand-sparkles"></i>
+                <span class="hidden sm:inline">指法秘籍</span>
+            </button>
+            <button id="btnModeSelect" class="btn-cartoon bg-indigo-500 text-white border-2 border-indigo-700 rounded-xl px-3.5 py-1.5 font-bold text-sm flex items-center gap-1.5 hover:bg-indigo-600">
+                <i class="fas fa-trophy"></i>
+                <span id="currentModeLabel">关卡选择</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-1 max-w-6xl mx-auto w-full px-3 flex flex-col justify-between pb-2">
+        
+        <!-- Scoreboard / Level Stats Bar -->
+        <section class="bg-white/90 backdrop-blur rounded-2xl p-2.5 md:p-3.5 border-4 border-amber-400/90 shadow-lg mb-2 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-3 md:gap-6 flex-wrap">
+                <!-- Level Name badge -->
+                <div class="flex items-center gap-2 bg-amber-100 px-3 py-1 rounded-xl border-2 border-amber-300">
+                    <span id="stageIcon" class="text-2xl">🌱</span>
+                    <div>
+                        <div class="text-[11px] text-amber-800 font-bold uppercase leading-none">当前挑战</div>
+                        <div id="stageName" class="text-sm md:text-base font-black text-amber-950">基础启蒙 (手指基准键)</div>
+                    </div>
+                </div>
+
+                <!-- Stars -->
+                <div class="flex items-center gap-1">
+                    <span class="text-xs font-bold text-slate-500 mr-1">星级:</span>
+                    <span id="star1" class="text-amber-400 text-lg"><i class="fas fa-star"></i></span>
+                    <span id="star2" class="text-amber-400 text-lg"><i class="fas fa-star"></i></span>
+                    <span id="star3" class="text-slate-300 text-lg"><i class="fas fa-star"></i></span>
+                </div>
+
+                <!-- Combo -->
+                <div class="bg-rose-100 px-3 py-1 rounded-xl border-2 border-rose-300 flex items-center gap-1.5">
+                    <span class="text-rose-500 text-sm"><i class="fas fa-fire"></i></span>
+                    <span class="text-xs text-rose-800 font-black">连击:</span>
+                    <span id="comboCount" class="text-lg font-black text-rose-600">0</span>
+                </div>
+            </div>
+
+            <!-- Accuracy, Speed, Progress -->
+            <div class="flex items-center gap-3 md:gap-5 flex-wrap">
+                <div class="text-right">
+                    <div class="text-[10px] text-slate-500 font-bold">正确率</div>
+                    <div id="accuracyVal" class="text-base font-black text-emerald-600">100%</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[10px] text-slate-500 font-bold">速度 (WPM)</div>
+                    <div id="wpmVal" class="text-base font-black text-blue-600">0</div>
+                </div>
+                <!-- Progress bar -->
+                <div class="w-24 md:w-32">
+                    <div class="flex justify-between text-[10px] text-slate-600 font-bold mb-0.5">
+                        <span>进度</span>
+                        <span id="progressText">1/15</span>
+                    </div>
+                    <div class="w-full h-3.5 bg-slate-200 rounded-full overflow-hidden p-0.5 border border-slate-300">
+                        <div id="progressBar" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 rounded-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gameStage" class="relative bg-gradient-to-b from-sky-100/90 to-amber-50/90 rounded-3xl p-4 md:p-6 border-4 border-white shadow-xl flex flex-col items-center justify-center min-h-[190px] md:min-h-[220px] mb-2 overflow-hidden">
+            
+            <!-- Floating Pop Bubble Animation Area -->
+            <div id="bubbleContainer" class="relative flex flex-col items-center justify-center z-10">
+                <!-- Target Visual (Apple / Balloon Container) -->
+                <div class="target-bubble flex flex-col items-center">
+                    
+                    <!-- Chinese Character Big Prompt (Only visible in Chinese/Pinyin modes) -->
+                    <div id="chineseCharPrompt" class="text-4xl md:text-5xl font-black text-amber-900 drop-shadow-sm mb-1 hidden">
+                        <!-- e.g. 太阳 -->
+                        <span>日</span>
+                    </div>
+
+                    <!-- Meaning / Pinyin Display Card -->
+                    <div class="bg-white/95 px-6 py-3 rounded-2xl border-4 border-amber-400 shadow-md flex items-center justify-center gap-3">
+                        <span id="targetEmoji" class="text-3xl md:text-4xl">🍎</span>
+                        <div id="targetPinyinGuide" class="text-sm md:text-base text-sky-600 font-bold tracking-wide">
+                            <!-- e.g. rì -->
+                        </div>
+                    </div>
+
+                    <!-- Word / Letters to Type Stream -->
+                    <div class="mt-3 flex items-center justify-center gap-1.5 text-2xl md:text-4xl font-black tracking-widest bg-white/80 px-6 py-2 rounded-2xl border-2 border-dashed border-sky-300 shadow-inner">
+                        <span id="typedLetters" class="text-emerald-500 underline decoration-4 decoration-emerald-400"></span><span id="currentLetter" class="text-rose-500 bg-rose-100 px-2 py-0.5 rounded-lg border-2 border-rose-400 animate-pulse">A</span><span id="remainingLetters" class="text-slate-400">SDF</span>
+                    </div>
+
+                    <!-- Target Key Tip Prompt -->
+                    <div id="fingerTipText" class="mt-2 text-xs md:text-sm font-bold text-amber-900 bg-amber-200/90 px-3 py-1 rounded-full shadow-sm flex items-center gap-1.5">
+                        <i class="fas fa-hand-point-right text-rose-500"></i>
+                        <span>请使用 <b id="tipHand">左手</b> <b id="tipFinger" class="text-rose-600">食指</b> 轻按【<b id="tipKey">F</b>】键</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left Mascot (Cute Kingsoft Apple Guy) -->
+            <div class="absolute bottom-2 left-4 hidden sm:flex items-center gap-2 pointer-events-none opacity-80">
+                <div class="w-10 h-10 rounded-full bg-rose-500 border-2 border-white flex items-center justify-center text-lg text-white font-bold shadow">
+                    🍎
+                </div>
+                <div class="bg-white/90 text-[11px] font-bold text-slate-700 px-2.5 py-1 rounded-xl shadow-sm border border-slate-200">
+                    加油，不要低头看键盘哦！
+                </div>
+            </div>
+
+            <!-- Right Mascot (Pencil & Star) -->
+            <div class="absolute bottom-2 right-4 hidden sm:flex items-center gap-2 pointer-events-none opacity-80">
+                <div class="bg-white/90 text-[11px] font-bold text-slate-700 px-2.5 py-1 rounded-xl shadow-sm border border-slate-200">
+                    手指放回 F 和 J 盲打凸起键~
+                </div>
+                <div class="w-10 h-10 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-lg shadow">
+                    ⭐
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white/90 rounded-2xl p-2 md:p-3 border-2 border-sky-300 shadow-md mb-2 flex flex-col items-center">
+            <div class="text-[11px] md:text-xs font-black text-slate-600 mb-1 flex items-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                <span>标准指法提示图（红点跳动的手指即为对应按键手指）</span>
+            </div>
+
+            <div class="flex items-center justify-center gap-8 md:gap-24 w-full max-w-xl">
+                <!-- Left Hand SVG -->
+                <div class="flex flex-col items-center">
+                    <div class="text-[11px] font-bold text-sky-800 mb-0.5">左手 (Left Hand)</div>
+                    <svg id="svgLeftHand" class="w-28 md:w-36 h-20 md:h-24" viewBox="0 0 160 110">
+                        <!-- Palm -->
+                        <path d="M 35 70 C 35 100, 125 100, 125 70 C 125 55, 110 50, 95 55 C 80 50, 50 50, 35 70 Z" fill="#fed7aa" stroke="#f97316" stroke-width="2" />
+                        <!-- Left Pinky (小指) -->
+                        <path id="finger-L-pinky" class="transition-all" d="M 28 65 C 20 50, 20 25, 30 22 C 38 22, 42 45, 42 62 Z" fill="#ffb3ba" stroke="#f77a87" stroke-width="2"/>
+                        <!-- Left Ring (无名指) -->
+                        <path id="finger-L-ring" class="transition-all" d="M 45 55 C 42 35, 44 12, 56 10 C 66 10, 68 35, 65 52 Z" fill="#ffdfba" stroke="#e5b67e" stroke-width="2"/>
+                        <!-- Left Middle (中指) -->
+                        <path id="finger-L-middle" class="transition-all" d="M 70 52 C 68 25, 72 2, 85 2 C 96 2, 96 25, 90 52 Z" fill="#ffffba" stroke="#d1d167" stroke-width="2"/>
+                        <!-- Left Index (食指 - 负责 F, R, V, G, T, B) -->
+                        <path id="finger-L-index" class="transition-all" d="M 94 54 C 98 32, 102 12, 115 15 C 124 18, 118 42, 112 58 Z" fill="#baffc9" stroke="#72db88" stroke-width="2"/>
+                        <!-- Left Thumb (大拇指 - 空格) -->
+                        <path id="finger-L-thumb" class="transition-all" d="M 122 68 C 138 65, 150 72, 152 82 C 150 92, 130 92, 118 78 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+                        <!-- Text labels on fingers -->
+                        <text x="28" y="45" font-size="9" font-weight="bold" fill="#881337">小</text>
+                        <text x="52" y="35" font-size="9" font-weight="bold" fill="#78350f">无</text>
+                        <text x="77" y="27" font-size="9" font-weight="bold" fill="#713f12">中</text>
+                        <text x="106" y="36" font-size="9" font-weight="bold" fill="#14532d">食</text>
+                        <text x="135" y="80" font-size="9" font-weight="bold" fill="#334155">拇</text>
+                    </svg>
+                </div>
+
+                <!-- Right Hand SVG -->
+                <div class="flex flex-col items-center">
+                    <div class="text-[11px] font-bold text-sky-800 mb-0.5">右手 (Right Hand)</div>
+                    <svg id="svgRightHand" class="w-28 md:w-36 h-20 md:h-24" viewBox="0 0 160 110">
+                        <!-- Palm -->
+                        <path d="M 125 70 C 125 100, 35 100, 35 70 C 35 55, 50 50, 65 55 C 80 50, 110 50, 125 70 Z" fill="#fed7aa" stroke="#f97316" stroke-width="2" />
+                        <!-- Right Thumb (大拇指 - 空格) -->
+                        <path id="finger-R-thumb" class="transition-all" d="M 38 68 C 22 65, 10 72, 8 82 C 10 92, 30 92, 42 78 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+                        <!-- Right Index (食指 - 负责 J, U, M, H, Y, N) -->
+                        <path id="finger-R-index" class="transition-all" d="M 66 54 C 62 32, 58 12, 45 15 C 36 18, 42 42, 48 58 Z" fill="#bae1ff" stroke="#7cb8e8" stroke-width="2"/>
+                        <!-- Right Middle (中指 - 负责 K, I, ,) -->
+                        <path id="finger-R-middle" class="transition-all" d="M 90 52 C 92 25, 88 2, 75 2 C 64 2, 64 25, 70 52 Z" fill="#d7baff" stroke="#ad7df0" stroke-width="2"/>
+                        <!-- Right Ring (无名指 - 负责 L, O, .) -->
+                        <path id="finger-R-ring" class="transition-all" d="M 115 55 C 118 35, 116 12, 104 10 C 94 10, 92 35, 95 52 Z" fill="#ffbaf4" stroke="#e27ad2" stroke-width="2"/>
+                        <!-- Right Pinky (小指 - 负责 ;, P, /, Enter) -->
+                        <path id="finger-R-pinky" class="transition-all" d="M 132 65 C 140 50, 140 25, 130 22 C 122 22, 118 45, 118 62 Z" fill="#ffd1dc" stroke="#fa8ea4" stroke-width="2"/>
+                        <!-- Text labels on fingers -->
+                        <text x="18" y="80" font-size="9" font-weight="bold" fill="#334155">拇</text>
+                        <text x="47" y="36" font-size="9" font-weight="bold" fill="#1e3a8a">食</text>
+                        <text x="76" y="27" font-size="9" font-weight="bold" fill="#581c87">中</text>
+                        <text x="102" y="35" font-size="9" font-weight="bold" fill="#701a75">无</text>
+                        <text x="126" y="45" font-size="9" font-weight="bold" fill="#881337">小</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-amber-100/95 rounded-2xl p-2.5 md:p-3 border-4 border-amber-300 shadow-xl max-w-4xl mx-auto w-full">
+            <div id="keyboardContainer" class="flex flex-col gap-1.5 text-xs font-black select-none">
+                <!-- Keyboard Rows will be dynamically rendered or populated with exact finger class markers -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Mode Selection Modal -->
+    <div id="modalModeSelect" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-xl w-full border-4 border-amber-400 shadow-2xl relative">
+            <button id="btnCloseModeModal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl">
+                <i class="fas fa-times-circle"></i>
+            </button>
+            <div class="text-center mb-5">
+                <div class="text-4xl mb-1">🎮</div>
+                <h2 class="text-2xl font-black text-amber-900">请选择打字闯关模式</h2>
+                <p class="text-xs text-slate-500 font-bold">专为一年级小学生研发 · 由浅入深打好基础</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <!-- Level 1 -->
+                <button class="mode-card btn-cartoon text-left p-3.5 rounded-2xl border-3 border-emerald-400 bg-emerald-50 hover:bg-emerald-100 transition" data-mode="home-row">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-2xl">🌱</span>
+                        <h3 class="text-base font-black text-emerald-900">第一关: 基础启蒙</h3>
+                    </div>
+                    <p class="text-xs text-emerald-700 font-semibold leading-relaxed">
+                        A S D F J K L ; 基准键与字母启蒙，掌握双手八个手指的默认停靠点。
+                    </p>
+                </button>
+
+                <!-- Level 2 -->
+                <button class="mode-card btn-cartoon text-left p-3.5 rounded-2xl border-3 border-sky-400 bg-sky-50 hover:bg-sky-100 transition" data-mode="pinyin">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-2xl">🧸</span>
+                        <h3 class="text-base font-black text-sky-900">第二关: 拼音探险</h3>
+                    </div>
+                    <p class="text-xs text-sky-700 font-semibold leading-relaxed">
+                        一年级语文必学拼音：ba, ma, da, wo, ni, hao, tian... 拼读打字同步练。
+                    </p>
+                </button>
+
+                <!-- Level 3 -->
+                <button class="mode-card btn-cartoon text-left p-3.5 rounded-2xl border-3 border-indigo-400 bg-indigo-50 hover:bg-indigo-100 transition" data-mode="english">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-2xl">🐱</span>
+                        <h3 class="text-base font-black text-indigo-900">第三关: 萌萌英文</h3>
+                    </div>
+                    <p class="text-xs text-indigo-700 font-semibold leading-relaxed">
+                        小学初阶 3-5 字母萌词：cat, dog, sun, star, book, apple, fish，背记英文单词。
+                    </p>
+                </button>
+
+                <!-- Level 4 -->
+                <button class="mode-card btn-cartoon text-left p-3.5 rounded-2xl border-3 border-rose-400 bg-rose-50 hover:bg-rose-100 transition" data-mode="chinese">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-2xl">🇨🇳</span>
+                        <h3 class="text-base font-black text-rose-900">第四关: 识字达人</h3>
+                    </div>
+                    <p class="text-xs text-rose-700 font-semibold leading-relaxed">
+                        统编版一年级生字：日月水火、天地人、爸爸妈妈、手足口耳目，拼音输入对应汉字！
+                    </p>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal (Finger Rules) -->
+    <div id="modalHelp" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-lg w-full border-4 border-amber-400 shadow-2xl relative">
+            <button id="btnCloseHelpModal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl">
+                <i class="fas fa-times-circle"></i>
+            </button>
+            <div class="text-center mb-4">
+                <div class="text-4xl mb-1">📖</div>
+                <h2 class="text-2xl font-black text-amber-900">一年级打字指法歌谣</h2>
+                <p class="text-xs text-slate-500 font-bold">记住指法口诀，打字又快又轻松！</p>
+            </div>
+            <div class="space-y-2.5 text-xs md:text-sm font-bold text-slate-700 bg-amber-50 p-4 rounded-2xl border-2 border-amber-200">
+                <p class="flex items-center gap-2"><span class="text-rose-500 text-base">●</span> <strong>基准键要牢记：</strong>左手食指摸 <span class="bg-amber-200 px-1.5 py-0.5 rounded text-amber-900">F</span> 键，右手食指摸 <span class="bg-amber-200 px-1.5 py-0.5 rounded text-amber-900">J</span> 键（上面有突起的小横线）。</p>
+                <p class="flex items-center gap-2"><span class="text-emerald-500 text-base">●</span> <strong>八指就位：</strong>左手排开 <span class="text-pink-600">A S D F</span>，右手排开 <span class="text-blue-600">J K L ;</span>。</p>
+                <p class="flex items-center gap-2"><span class="text-sky-500 text-base">●</span> <strong>拇指管空格：</strong>双手大拇指轻松放在长长的空格键（Space）上。</p>
+                <p class="flex items-center gap-2"><span class="text-indigo-500 text-base">●</span> <strong>打完就回家：</strong>任何手指按完上排或下排按键后，都要轻轻回落到基准键休息哦！</p>
+            </div>
+            <button id="btnGotHelp" class="w-full mt-4 btn-cartoon bg-amber-400 hover:bg-amber-500 text-amber-950 font-black py-2.5 rounded-xl border-2 border-amber-600 text-center">
+                我明白啦，马上练习！
+            </button>
+        </div>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="modalVictory" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-md w-full border-4 border-amber-400 shadow-2xl text-center relative overflow-hidden">
+            <div class="text-5xl mb-2 animate-bounce">🏆</div>
+            <h2 class="text-3xl font-black text-amber-900 mb-1">太棒啦！通关大捷！</h2>
+            <p id="victorySubtitle" class="text-sm font-bold text-emerald-600 mb-4">你简直是键盘小神童！</p>
+            
+            <div class="flex justify-center gap-2 text-3xl text-amber-400 mb-4">
+                <i class="fas fa-star drop-shadow"></i>
+                <i class="fas fa-star drop-shadow"></i>
+                <i class="fas fa-star drop-shadow"></i>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 bg-amber-50 p-4 rounded-2xl border-2 border-amber-200 mb-5 text-left text-xs font-bold text-slate-700">
+                <div>最终速度: <span id="modalWpm" class="text-indigo-600 text-sm font-black">25 WPM</span></div>
+                <div>最终正确率: <span id="modalAccuracy" class="text-emerald-600 text-sm font-black">98%</span></div>
+                <div>连击记录: <span id="modalCombo" class="text-rose-600 text-sm font-black">32 次</span></div>
+                <div>消灭词语: <span id="modalTotal" class="text-amber-700 text-sm font-black">15 个</span></div>
+            </div>
+
+            <div class="flex gap-3">
+                <button id="btnReplay" class="flex-1 btn-cartoon bg-sky-400 hover:bg-sky-500 text-sky-950 font-black py-2.5 rounded-xl border-2 border-sky-600">
+                    再玩一次 ↺
+                </button>
+                <button id="btnNextMode" class="flex-1 btn-cartoon bg-amber-400 hover:bg-amber-500 text-amber-950 font-black py-2.5 rounded-xl border-2 border-amber-600">
+                    下一关卡 ➜
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Synthesis and Game Logic Engine -->
+    <script>
+        class RetroAudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playCorrect() {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    // Cheerful popping marimba-like sound
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.08); // G5
+
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.13);
+                } catch (e) {
+                    // Audio fallback
+                }
+            }
+
+            playWordComplete() {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    const now = this.ctx.currentTime;
+                    // Chime arpeggio
+                    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, now + i * 0.06);
+
+                        gain.gain.setValueAtTime(0.2, now + i * 0.06);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.18);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+
+                        osc.start(now + i * 0.06);
+                        osc.stop(now + i * 0.06 + 0.2);
+                    });
+                } catch (e) {}
+            }
+
+            playTypo() {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    // Gentle retro cartoon buzzer/boing
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.exponentialRampToValueAtTime(90, now + 0.18);
+
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.22);
+                } catch (e) {}
+            }
+
+            playFanfare() {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    const now = this.ctx.currentTime;
+                    const notes = [
+                        { f: 523.25, d: 0.12 },
+                        { f: 659.25, d: 0.12 },
+                        { f: 783.99, d: 0.12 },
+                        { f: 1046.5, d: 0.4 }
+                    ];
+                    let t = now;
+                    notes.forEach(n => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(n.f, t);
+
+                        gain.gain.setValueAtTime(0.18, t);
+                        gain.gain.exponentialRampToValueAtTime(0.001, t + n.d);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+
+                        osc.start(t);
+                        osc.stop(t + n.d + 0.02);
+                        t += n.d * 0.9;
+                    });
+                } catch (e) {}
+            }
+        }
+
+        const soundEngine = new RetroAudioEngine();
+
+        const WORD_BANKS = {
+            'home-row': [
+                { word: 'asdf', hint: '左手基准键', emoji: '👈' },
+                { word: 'jkl;', hint: '右手基准键', emoji: '👉' },
+                { word: 'fjdksla;', hint: '双手基准键连弹', emoji: '🎹' },
+                { word: 'dad', hint: '爸爸 (dad)', emoji: '👨' },
+                { word: 'fall', hint: '秋天 / 掉落', emoji: '🍂' },
+                { word: 'all', hint: '大家 / 全部', emoji: '🌟' },
+                { word: 'sad', hint: '难过', emoji: '😢' },
+                { word: 'flash', hint: '闪烁', emoji: '⚡' },
+                { word: 'salad', hint: '蔬菜沙拉', emoji: '🥗' },
+                { word: 'lad', hint: '小少年', emoji: '👦' },
+                { word: 'ask', hint: '提问', emoji: '❓' },
+                { word: 'glass', hint: '玻璃杯', emoji: '🥛' }
+            ],
+            'pinyin': [
+                { word: 'ba', hint: 'b-a 爸 / 八', emoji: '8️⃣', pinyin: 'bà' },
+                { word: 'ma', hint: 'm-a 妈 / 马', emoji: '🐎', pinyin: 'mā' },
+                { word: 'da', hint: 'd-a 大', emoji: '🐘', pinyin: 'dà' },
+                { word: 'wo', hint: 'w-o 我', emoji: '🙋', pinyin: 'wǒ' },
+                { word: 'ni', hint: 'n-i 你', emoji: '👦', pinyin: 'nǐ' },
+                { word: 'hao', hint: 'h-a-o 好', emoji: '👍', pinyin: 'hǎo' },
+                { word: 'tian', hint: 't-i-a-n 天空', emoji: '🌤️', pinyin: 'tiān' },
+                { word: 'yu', hint: 'y-u 下雨 / 小鱼', emoji: '🐟', pinyin: 'yǔ' },
+                { word: 'hua', hint: 'h-u-a 红花', emoji: '🌸', pinyin: 'huā' },
+                { word: 'niao', hint: 'n-i-a-o 小鸟', emoji: '🐦', pinyin: 'niǎo' },
+                { word: 'bai', hint: 'b-a-i 白云', emoji: '☁️', pinyin: 'bái' },
+                { word: 'xue', hint: 'x-u-e 下雪 / 上学', emoji: '❄️', pinyin: 'xuě' }
+            ],
+            'english': [
+                { word: 'cat', hint: '小猫', emoji: '🐱' },
+                { word: 'dog', hint: '小狗', emoji: '🐶' },
+                { word: 'sun', hint: '太阳', emoji: '☀️' },
+                { word: 'star', hint: '星星', emoji: '⭐' },
+                { word: 'book', hint: '书本', emoji: '📖' },
+                { word: 'fish', hint: '小鱼', emoji: '🐠' },
+                { word: 'bird', hint: '小鸟', emoji: '🐦' },
+                { word: 'apple', hint: '苹果', emoji: '🍎' },
+                { word: 'milk', hint: '牛奶', emoji: '🥛' },
+                { word: 'tree', hint: '大树', emoji: '🌳' },
+                { word: 'moon', hint: '月亮', emoji: '🌙' },
+                { word: 'duck', hint: '小鸭', emoji: '🦆' }
+            ],
+            'chinese': [
+                { char: '日', pinyin: 'ri', hint: '太阳 (rì)', emoji: '☀️' },
+                { char: '月', pinyin: 'yue', hint: '月亮 (yuè)', emoji: '🌙' },
+                { char: '水', pinyin: 'shui', hint: '河水 (shuǐ)', emoji: '💧' },
+                { char: '火', pinyin: 'huo', hint: '大火 (huǒ)', emoji: '🔥' },
+                { char: '天', pinyin: 'tian', hint: '蓝天 (tiān)', emoji: '☁️' },
+                { char: '地', pinyin: 'di', hint: '大地 (dì)', emoji: '🌍' },
+                { char: '人', pinyin: 'ren', hint: '人们 (rén)', emoji: '🧍' },
+                { char: '口', pinyin: 'kou', hint: '嘴巴 (kǒu)', emoji: '👄' },
+                { char: '耳', pinyin: 'er', hint: '耳朵 (ěr)', emoji: '👂' },
+                { char: '目', pinyin: 'mu', hint: '眼睛 (mù)', emoji: '👀' },
+                { char: '手', pinyin: 'shou', hint: '双手 (shǒu)', emoji: '🖐️' },
+                { char: '足', pinyin: 'zu', hint: '双脚 (zú)', emoji: '🦶' },
+                { char: '山', pinyin: 'shan', hint: '高山 (shān)', emoji: '⛰️' },
+                { char: '上', pinyin: 'shang', hint: '上面 (shàng)', emoji: '⬆️' },
+                { char: '下', pinyin: 'xia', hint: '下面 (xià)', emoji: '⬇️' }
+            ]
+        };
+
+        // Finger classes: finger-l-pinky, finger-l-ring, finger-l-middle, finger-l-index, finger-r-index, finger-r-middle, finger-r-ring, finger-r-pinky, finger-thumb
+        const KEYBOARD_LAYOUT = [
+            [
+                { key: '`', shift: '~', finger: 'finger-l-pinky', hand: '左手', fingerName: '小指', id: 'Backquote' },
+                { key: '1', shift: '!', finger: 'finger-l-pinky', hand: '左手', fingerName: '小指', id: 'Digit1' },
+                { key: '2', shift: '@', finger: 'finger-l-ring',  hand: '左手', fingerName: '无名指', id: 'Digit2' },
+                { key: '3', shift: '#', finger: 'finger-l-middle',hand: '左手', fingerName: '中指', id: 'Digit3' },
+                { key: '4', shift: '$', finger: 'finger-l-index', hand: '左手', fingerName: '食指', id: 'Digit4' },
+                { key: '5', shift: '%', finger: 'finger-l-index', hand: '左手', fingerName: '食指', id: 'Digit5' },
+                { key: '6', shift: '^', finger: 'finger-r-index', hand: '右手', fingerName: '食指', id: 'Digit6' },
+                { key: '7', shift: '&', finger: 'finger-r-index', hand: '右手', fingerName: '食指', id: 'Digit7' },
+                { key: '8', shift: '*', finger: 'finger-r-middle',hand: '右手', fingerName: '中指', id: 'Digit8' },
+                { key: '9', shift: '(', finger: 'finger-r-ring',  hand: '右手', fingerName: '无名指', id: 'Digit9' },
+                { key: '0', shift: ')', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'Digit0' },
+                { key: '-', shift: '_', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'Minus' },
+                { key: '=', shift: '+', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'Equal' },
+                { key: 'Backspace', label: '退格 ⌫', width: 'flex-1', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'Backspace' }
+            ],
+            [
+                { key: 'Tab', label: 'Tab ⇥', width: 'w-12 md:w-16', finger: 'finger-l-pinky', hand: '左手', fingerName: '小指', id: 'Tab' },
+                { key: 'Q', finger: 'finger-l-pinky', hand: '左手', fingerName: '小指', id: 'KeyQ' },
+                { key: 'W', finger: 'finger-l-ring',  hand: '左手', fingerName: '无名指', id: 'KeyW' },
+                { key: 'E', finger: 'finger-l-middle',hand: '左手', fingerName: '中指', id: 'KeyE' },
+                { key: 'R', finger: 'finger-l-index', hand: '左手', fingerName: '食指', id: 'KeyR' },
+                { key: 'T', finger: 'finger-l-index', hand: '左手', fingerName: '食指', id: 'KeyT' },
+                { key: 'Y', finger: 'finger-r-index', hand: '右手', fingerName: '食指', id: 'KeyY' },
+                { key: 'U', finger: 'finger-r-index', hand: '右手', fingerName: '食指', id: 'KeyU' },
+                { key: 'I', finger: 'finger-r-middle',hand: '右手', fingerName: '中指', id: 'KeyI' },
+                { key: 'O', finger: 'finger-r-ring',  hand: '右手', fingerName: '无名指', id: 'KeyO' },
+                { key: 'P', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'KeyP' },
+                { key: '[', shift: '{', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'BracketLeft' },
+                { key: ']', shift: '}', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'BracketRight' },
+                { key: '\\', shift: '|', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'Backslash' }
+            ],
+            [
+                { key: 'CapsLock', label: '大写锁定', width: 'w-14 md:w-20', finger: 'finger-l-pinky', hand: '左手', fingerName: '小指', id: 'CapsLock' },
+                { key: 'A', finger: 'finger-l-pinky', hand: '左手', fingerName: '小指', isHome: true, id: 'KeyA' },
+                { key: 'S', finger: 'finger-l-ring',  hand: '左手', fingerName: '无名指', isHome: true, id: 'KeyS' },
+                { key: 'D', finger: 'finger-l-middle',hand: '左手', fingerName: '中指', isHome: true, id: 'KeyD' },
+                { key: 'F', finger: 'finger-l-index', hand: '左手', fingerName: '食指', isHome: true, hasBump: true, id: 'KeyF' },
+                { key: 'G', finger: 'finger-l-index', hand: '左手', fingerName: '食指', id: 'KeyG' },
+                { key: 'H', finger: 'finger-r-index', hand: '右手', fingerName: '食指', id: 'KeyH' },
+                { key: 'J', finger: 'finger-r-index', hand: '右手', fingerName: '食指', isHome: true, hasBump: true, id: 'KeyJ' },
+                { key: 'K', finger: 'finger-r-middle',hand: '右手', fingerName: '中指', isHome: true, id: 'KeyK' },
+                { key: 'L', finger: 'finger-r-ring',  hand: '右手', fingerName: '无名指', isHome: true, id: 'KeyL' },
+                { key: ';', shift: ':', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', isHome: true, id: 'Semicolon' },
+                { key: '\'', shift: '"', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'Quote' },
+                { key: 'Enter', label: '回车 ↵', width: 'flex-1', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'Enter' }
+            ],
+            [
+                { key: 'ShiftLeft', label: 'Shift ⇧', width: 'w-16 md:w-24', finger: 'finger-l-pinky', hand: '左手', fingerName: '小指', id: 'ShiftLeft' },
+                { key: 'Z', finger: 'finger-l-pinky', hand: '左手', fingerName: '小指', id: 'KeyZ' },
+                { key: 'X', finger: 'finger-l-ring',  hand: '左手', fingerName: '无名指', id: 'KeyX' },
+                { key: 'C', finger: 'finger-l-middle',hand: '左手', fingerName: '中指', id: 'KeyC' },
+                { key: 'V', finger: 'finger-l-index', hand: '左手', fingerName: '食指', id: 'KeyV' },
+                { key: 'B', finger: 'finger-l-index', hand: '左手', fingerName: '食指', id: 'KeyB' },
+                { key: 'N', finger: 'finger-r-index', hand: '右手', fingerName: '食指', id: 'KeyN' },
+                { key: 'M', finger: 'finger-r-index', hand: '右手', fingerName: '食指', id: 'KeyM' },
+                { key: ',', shift: '<', finger: 'finger-r-middle', hand: '右手', fingerName: '中指', id: 'Comma' },
+                { key: '.', shift: '>', finger: 'finger-r-ring',   hand: '右手', fingerName: '无名指', id: 'Period' },
+                { key: '/', shift: '?', finger: 'finger-r-pinky',  hand: '右手', fingerName: '小指', id: 'Slash' },
+                { key: 'ShiftRight', label: 'Shift ⇧', width: 'flex-1', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'ShiftRight' }
+            ],
+            [
+                { key: 'Control', label: 'Ctrl', width: 'w-12 md:w-14', finger: 'finger-l-pinky', hand: '左手', fingerName: '小指', id: 'ControlLeft' },
+                { key: 'Alt', label: 'Alt', width: 'w-10 md:w-12', finger: 'finger-thumb', hand: '左手', fingerName: '大拇指', id: 'AltLeft' },
+                { key: ' ', label: '空格 Space (大拇指)', width: 'flex-1', finger: 'finger-thumb', hand: '双手', fingerName: '大拇指', id: 'Space' },
+                { key: 'Alt', label: 'Alt', width: 'w-10 md:w-12', finger: 'finger-thumb', hand: '右手', fingerName: '大拇指', id: 'AltRight' },
+                { key: 'Control', label: 'Ctrl', width: 'w-12 md:w-14', finger: 'finger-r-pinky', hand: '右手', fingerName: '小指', id: 'ControlRight' }
+            ]
+        ];
+
+        // Lookup map for fast retrieval of key info
+        const KEY_MAP = {};
+        KEYBOARD_LAYOUT.forEach(row => {
+            row.forEach(k => {
+                const charLower = k.key.toLowerCase();
+                KEY_MAP[charLower] = k;
+                if (k.id) KEY_MAP[k.id.toLowerCase()] = k;
+            });
         });
-      }
-    }
 
-    const sfx = new SoundFX();
+        function renderKeyboard() {
+            const container = document.getElementById('keyboardContainer');
+            container.innerHTML = '';
 
-    const FINGER_MAP = {
-      '1': { finger: 'lp', name: '左手小指', color: 'var(--finger-pink)' },
-      'Q': { finger: 'lp', name: '左手小指', color: 'var(--finger-pink)' },
-      'A': { finger: 'lp', name: '左手小指', color: 'var(--finger-pink)' },
-      'Z': { finger: 'lp', name: '左手小指', color: 'var(--finger-pink)' },
-      '2': { finger: 'lr', name: '左手无名指', color: 'var(--finger-orange)' },
-      'W': { finger: 'lr', name: '左手无名指', color: 'var(--finger-orange)' },
-      'S': { finger: 'lr', name: '左手无名指', color: 'var(--finger-orange)' },
-      'X': { finger: 'lr', name: '左手无名指', color: 'var(--finger-orange)' },
-      '3': { finger: 'lm', name: '左手中指', color: 'var(--finger-green)' },
-      'E': { finger: 'lm', name: '左手中指', color: 'var(--finger-green)' },
-      'D': { finger: 'lm', name: '左手中指', color: 'var(--finger-green)' },
-      'C': { finger: 'lm', name: '左手中指', color: 'var(--finger-green)' },
-      '4': { finger: 'li', name: '左手食指', color: 'var(--finger-blue)' },
-      '5': { finger: 'li', name: '左手食指', color: 'var(--finger-blue)' },
-      'R': { finger: 'li', name: '左手食指', color: 'var(--finger-blue)' },
-      'T': { finger: 'li', name: '左手食指', color: 'var(--finger-blue)' },
-      'F': { finger: 'li', name: '左手食指', color: 'var(--finger-blue)' },
-      'G': { finger: 'li', name: '左手食指', color: 'var(--finger-blue)' },
-      'V': { finger: 'li', name: '左手食指', color: 'var(--finger-blue)' },
-      'B': { finger: 'li', name: '左手食指', color: 'var(--finger-blue)' },
-      ' ': { finger: 'lt', name: '大拇指', color: 'var(--finger-purple)' },
-      '6': { finger: 'ri', name: '右手食指', color: 'var(--finger-blue)' },
-      '7': { finger: 'ri', name: '右手食指', color: 'var(--finger-blue)' },
-      'Y': { finger: 'ri', name: '右手食指', color: 'var(--finger-blue)' },
-      'U': { finger: 'ri', name: '右手食指', color: 'var(--finger-blue)' },
-      'H': { finger: 'ri', name: '右手食指', color: 'var(--finger-blue)' },
-      'J': { finger: 'ri', name: '右手食指', color: 'var(--finger-blue)' },
-      'N': { finger: 'ri', name: '右手食指', color: 'var(--finger-blue)' },
-      'M': { finger: 'ri', name: '右手食指', color: 'var(--finger-blue)' },
-      '8': { finger: 'rm', name: '右手中指', color: 'var(--finger-green)' },
-      'I': { finger: 'rm', name: '右手中指', color: 'var(--finger-green)' },
-      'K': { finger: 'rm', name: '右手中指', color: 'var(--finger-green)' },
-      ',': { finger: 'rm', name: '右手中指', color: 'var(--finger-green)' },
-      '9': { finger: 'rr', name: '右手无名指', color: 'var(--finger-orange)' },
-      'O': { finger: 'rr', name: '右手无名指', color: 'var(--finger-orange)' },
-      'L': { finger: 'rr', name: '右手无名指', color: 'var(--finger-orange)' },
-      '.': { finger: 'rr', name: '右手无名指', color: 'var(--finger-orange)' },
-      '0': { finger: 'rp', name: '右手小指', color: 'var(--finger-pink)' },
-      'P': { finger: 'rp', name: '右手小指', color: 'var(--finger-pink)' },
-      ';': { finger: 'rp', name: '右手小指', color: 'var(--finger-pink)' },
-      '/': { finger: 'rp', name: '右手小指', color: 'var(--finger-pink)' }
-    };
+            KEYBOARD_LAYOUT.forEach(row => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'flex gap-1 justify-center w-full';
 
-    const VOCAB = {
-      stage1: [
-        { char: 'A', pinyin: '左手小指', targetSeq: 'A' },
-        { char: 'S', pinyin: '左手无名指', targetSeq: 'S' },
-        { char: 'D', pinyin: '左手中指', targetSeq: 'D' },
-        { char: 'F', pinyin: '食指盲打定位凸起', targetSeq: 'F' },
-        { char: 'J', pinyin: '食指盲打定位凸起', targetSeq: 'J' },
-        { char: 'K', pinyin: '右手中指', targetSeq: 'K' },
-        { char: 'L', pinyin: '右手无名指', targetSeq: 'L' },
-        { char: ';', pinyin:已为你设计并制作完成单文件 HTML 网页版打字练习游戏：[小学一年级趣味打字大冒险.html](https://drive.google.com/file/d/1-yVBhH85p6Y_PCGwLnPbr5jimJ-zCoDi/view?usp=drivesdk)。
+                row.forEach(k => {
+                    const btn = document.createElement('div');
+                    btn.id = `key-${k.id || k.key.toLowerCase()}`;
+                    const widthClass = k.width || 'flex-1 max-w-[54px]';
+                    btn.className = `key-cap ${widthClass} h-10 md:h-12 rounded-xl flex flex-col items-center justify-center font-black border-2 border-b-4 select-none relative cursor-pointer ${k.finger}`;
 
-该游戏无需配置复杂的开发环境或安装额外插件，使用任何主流浏览器（如 Chrome、Edge、Safari 等）打开即可直接运行。
+                    // Content
+                    if (k.label) {
+                        btn.innerHTML = `<span class="text-[11px] md:text-xs leading-none">${k.label}</span>`;
+                    } else {
+                        btn.innerHTML = `<span class="text-sm md:text-base leading-none">${k.key}</span>`;
+                        if (k.shift) {
+                            btn.innerHTML = `<span class="text-[9px] opacity-70 leading-none">${k.shift}</span><span class="text-xs md:text-sm font-black leading-none">${k.key}</span>`;
+                        }
+                    }
 
----
+                    // Home row bumps on F and J
+                    if (k.hasBump) {
+                        const bump = document.createElement('div');
+                        bump.className = 'absolute bottom-1 w-3.5 h-1 bg-slate-700/60 rounded-full pointer-events-none';
+                        btn.appendChild(bump);
+                    }
 
-### 🎮 游戏核心功能与设计说明
+                    // Click sound/feedback if user taps virtual key
+                    btn.addEventListener('mousedown', () => {
+                        btn.classList.add('key-active');
+                        handleUserCharInput(k.key.length === 1 ? k.key : (k.id === 'Space' ? ' ' : ''));
+                    });
+                    btn.addEventListener('mouseup', () => btn.classList.remove('key-active'));
+                    btn.addEventListener('mouseleave', () => btn.classList.remove('key-active'));
 
-#### 1. 关卡阶梯式进阶（涵盖英文、拼音与一年级汉字）
-* **第一阶：基准键位启蒙**
-  * 专练主键盘基准键（`A S D F` 与 `J K L ;`），强化八指常驻基准键位的习惯，重点突出 `F` 与 `J` 两个盲打定位凸起键。
-* **第二阶：26 个英文字母与声母韵母**
-  * 覆盖全键盘 26 个英文字母，融合一年级上册核心声母（`b, p, m, f, d, t, n, l, g, k, h...`）与单韵母（`a, o, e, i, u`），建立键位空间感。
-* **第三阶：拼音音节与趣味英文单词**
-  * 练习基础两拼音节（如 `ba` 爸爸、`ma` 妈妈、`da` 大门、`ni` 你好）及一年级常见简单英文单词（如 `cat`, `dog`, `sun`, `book`, `red` 等）。
-* **第四阶：一年级部编版生字与词语**
-  * 涵盖部编版小学一年级核心生字（人、天、地、你、我、他、日、月、水、火、山、石、田、土、木）与词语（春风、夏雨、小鸟、中国）。通过“看汉字与注音、敲击对应拼音字母”的方式点亮汉字，兼顾打字手法与识字拼读。
-* **第五阶：金山气球大作战（经典趣味游戏）**
-  * 还原金山打字通经典的漂浮气球玩法，气球随机携带字母或单词上升，及时击中可戳破气球得分，锻炼反应速度。
+                    rowDiv.appendChild(btn);
+                });
 
----
+                container.appendChild(rowDiv);
+            });
+        }
 
-#### 2. 规范手法与全键盘界面引导
-* **标准虚拟键盘显示**：界面内置完整 QWERTY 键盘，`F` 键与 `J` 键绘制了仿真盲打定位小横线凸起。
-* **标准 8 指色彩分区**：
-  * **粉色**：双手小指负责键位（`Q A Z 1` / `P ; / 0` 等）
-  * **橙色**：双手无名指负责键位（`W S X 2` / `O L . 9` 等）
-  * **绿色**：双手中指负责键位（`E D C 3` / `I K , 8` 等）
-  * **蓝色**：双手食指负责键位（`R T F G V B 4 5` / `Y U H J N M 6 7` 等）
-  * **紫色**：大拇指负责空格键
-* **动态手部指引图与教练提示**：
-  * 键盘上方设有左右手 10 指图示。遇到待按按键时，系统会自动将该键对应的一根手指高亮弹起并标注指向箭头。
-  * 顶部提示框实时显示口诀（例如：*“目标键【 J 】 请用【右手食指】敲击！”*），直观指导一年级学生规范击键指法。
+        class GameEngine {
+            constructor() {
+                this.currentMode = 'home-row';
+                this.wordList = [];
+                this.currentIndex = 0;
+                this.currentWordObj = null;
+                this.currentLetterPos = 0;
 
----
+                // Stats
+                this.totalKeyStrokes = 0;
+                this.correctKeyStrokes = 0;
+                this.combo = 0;
+                this.maxCombo = 0;
+                this.startTime = null;
+                this.timerInterval = null;
 
-#### 3. 打字错误与奖励提示音（Web Audio API）
-* **打字错误**：触发轻柔的低频卡通滑音（“波/嗡”音），提醒手指按错，不损伤儿童听感。
-* **打字正确**：触发清脆明快的双音叮咚风铃声。
-* **连击与通关**：连续击中触发和弦上行琶音，并弹出连击提示。
-* **静音功能**：右上角提供声音开关，方便在安静教室或自主练习时一键切换。
+                // UI Elements
+                this.accuracyVal = document.getElementById('accuracyVal');
+                this.wpmVal = document.getElementById('wpmVal');
+                this.comboCount = document.getElementById('comboCount');
+                this.progressBar = document.getElementById('progressBar');
+                this.progressText = document.getElementById('progressText');
+                this.stageIcon = document.getElementById('stageIcon');
+                this.stageName = document.getElementById('stageName');
+                this.currentModeLabel = document.getElementById('currentModeLabel');
 
----
+                this.chineseCharPrompt = document.getElementById('chineseCharPrompt');
+                this.targetEmoji = document.getElementById('targetEmoji');
+                this.targetPinyinGuide = document.getElementById('targetPinyinGuide');
+                this.typedLetters = document.getElementById('typedLetters');
+                this.currentLetter = document.getElementById('currentLetter');
+                this.remainingLetters = document.getElementById('remainingLetters');
 
-### 📥 使用方法
-1. 点击打开 [小学一年级趣味打字大冒险.html](https://drive.google.com/file/d/1-yVBhH85p6Y_PCGwLnPbr5jimJ-zCoDi/view?usp=drivesdk)；
-2. 在 Google Drive 页面右上角点击 **下载**（或按 `Ctrl + S` 保存至本地电脑）；
-3. 双击下载后的 `.html` 文件即可全屏开始打字练习。
+                this.tipHand = document.getElementById('tipHand');
+                this.tipFinger = document.getElementById('tipFinger');
+                this.tipKey = document.getElementById('tipKey');
 
-http://googleusercontent.com/action_card_content/081c7482-2802-434b-9cdd-1849db0d469b
-http://googleusercontent.com/action_card_content/57b9648b-9577-409c-a0d5-54d336db7bac
-http://googleusercontent.com/action_card_content/6670b303-22d3-4565-a893-a218065e45f9
+                this.modalVictory = document.getElementById('modalVictory');
+                this.modalModeSelect = document.getElementById('modalModeSelect');
+                this.modalHelp = document.getElementById('modalHelp');
+            }
+
+            init() {
+                this.setMode('home-row');
+                this.bindGlobalEvents();
+            }
+
+            setMode(mode) {
+                this.currentMode = mode;
+                // Clone & shuffle wordlist
+                const rawList = WORD_BANKS[mode] || WORD_BANKS['home-row'];
+                this.wordList = [...rawList].sort(() => 0.5 - Math.random());
+                this.currentIndex = 0;
+                this.totalKeyStrokes = 0;
+                this.correctKeyStrokes = 0;
+                this.combo = 0;
+                this.maxCombo = 0;
+                this.startTime = null;
+
+                // Update Mode labels
+                const titles = {
+                    'home-row': { name: '第一关: 基础启蒙 (基准键)', icon: '🌱', label: '基础启蒙' },
+                    'pinyin': { name: '第二关: 拼音探险 (一载拼读)', icon: '🧸', label: '拼音探险' },
+                    'english': { name: '第三关: 萌萌英文 (初阶词汇)', icon: '🐱', label: '萌萌英文' },
+                    'chinese': { name: '第四关: 识字达人 (生字拼音)', icon: '🇨🇳', label: '识字达人' }
+                };
+                const info = titles[mode] || titles['home-row'];
+                this.stageName.innerText = info.name;
+                this.stageIcon.innerText = info.icon;
+                this.currentModeLabel.innerText = info.label;
+
+                this.loadNextWord();
+                this.updateStatsUI();
+            }
+
+            loadNextWord() {
+                if (this.currentIndex >= this.wordList.length) {
+                    this.triggerVictory();
+                    return;
+                }
+
+                this.currentWordObj = this.wordList[this.currentIndex];
+                this.currentLetterPos = 0;
+
+                // Configure current target string to type
+                if (this.currentMode === 'chinese') {
+                    // Type pinyin to complete Chinese character
+                    this.targetString = this.currentWordObj.pinyin.toLowerCase();
+                    this.chineseCharPrompt.classList.remove('hidden');
+                    this.chineseCharPrompt.innerHTML = `<span>${this.currentWordObj.char}</span>`;
+                    this.targetPinyinGuide.innerText = `拼音提示: ${this.currentWordObj.pinyin} (${this.currentWordObj.hint})`;
+                } else if (this.currentMode === 'pinyin') {
+                    this.targetString = this.currentWordObj.word.toLowerCase();
+                    this.chineseCharPrompt.classList.add('hidden');
+                    this.targetPinyinGuide.innerText = `拼音: ${this.currentWordObj.pinyin || this.currentWordObj.word} (${this.currentWordObj.hint})`;
+                } else {
+                    this.targetString = this.currentWordObj.word.toLowerCase();
+                    this.chineseCharPrompt.classList.add('hidden');
+                    this.targetPinyinGuide.innerText = `${this.currentWordObj.hint}`;
+                }
+
+                this.targetEmoji.innerText = this.currentWordObj.emoji || '🎯';
+
+                this.updateWordDisplay();
+                this.highlightCurrentTargetKey();
+                this.updateProgress();
+            }
+
+            updateWordDisplay() {
+                const typed = this.targetString.slice(0, this.currentLetterPos);
+                const current = this.targetString[this.currentLetterPos] || '';
+                const remaining = this.targetString.slice(this.currentLetterPos + 1);
+
+                this.typedLetters.innerText = typed.toUpperCase();
+                this.currentLetter.innerText = current.toUpperCase() || '✓';
+                this.remainingLetters.innerText = remaining.toUpperCase();
+            }
+
+            highlightCurrentTargetKey() {
+                // Clear previous key targets
+                document.querySelectorAll('.key-target').forEach(el => el.classList.remove('key-target'));
+                // Clear active finger highlight
+                document.querySelectorAll('.finger-active').forEach(el => el.classList.remove('finger-active'));
+
+                const curChar = this.targetString[this.currentLetterPos];
+                if (!curChar) return;
+
+                const keyData = KEY_MAP[curChar.toLowerCase()];
+                if (keyData) {
+                    // Highlight key on keyboard
+                    const keyEl = document.getElementById(`key-${keyData.id || keyData.key.toLowerCase()}`);
+                    if (keyEl) {
+                        keyEl.classList.add('key-target');
+                    }
+
+                    // Hand Guide Text
+                    this.tipHand.innerText = keyData.hand;
+                    this.tipFinger.innerText = keyData.fingerName;
+                    this.tipKey.innerText = keyData.key.toUpperCase();
+
+                    // Animate hand finger in SVG
+                    this.highlightHandFinger(keyData);
+                }
+            }
+
+            highlightHandFinger(keyData) {
+                let fingerId = '';
+                if (keyData.finger === 'finger-thumb') {
+                    fingerId = keyData.hand === '左手' ? 'finger-L-thumb' : 'finger-R-thumb';
+                } else if (keyData.finger === 'finger-l-pinky') {
+                    fingerId = 'finger-L-pinky';
+                } else if (keyData.finger === 'finger-l-ring') {
+                    fingerId = 'finger-L-ring';
+                } else if (keyData.finger === 'finger-l-middle') {
+                    fingerId = 'finger-L-middle';
+                } else if (keyData.finger === 'finger-l-index') {
+                    fingerId = 'finger-L-index';
+                } else if (keyData.finger === 'finger-r-index') {
+                    fingerId = 'finger-R-index';
+                } else if (keyData.finger === 'finger-r-middle') {
+                    fingerId = 'finger-R-middle';
+                } else if (keyData.finger === 'finger-r-ring') {
+                    fingerId = 'finger-R-ring';
+                } else if (keyData.finger === 'finger-r-pinky') {
+                    fingerId = 'finger-R-pinky';
+                }
+
+                if (fingerId) {
+                    const fingerElem = document.getElementById(fingerId);
+                    if (fingerElem) {
+                        fingerElem.classList.add('finger-active');
+                    }
+                }
+            }
+
+            handleInput(inputChar) {
+                if (!this.targetString) return;
+                if (!this.startTime) this.startTime = Date.now();
+
+                const expectedChar = this.targetString[this.currentLetterPos];
+                if (!expectedChar) return;
+
+                this.totalKeyStrokes++;
+
+                if (inputChar.toLowerCase() === expectedChar.toLowerCase()) {
+                    // Correct!
+                    this.correctKeyStrokes++;
+                    this.combo++;
+                    if (this.combo > this.maxCombo) this.maxCombo = this.combo;
+
+                    soundEngine.playCorrect();
+                    this.showFloatingText('👍 +1', '#10b981');
+
+                    this.currentLetterPos++;
+
+                    // Word completed?
+                    if (this.currentLetterPos >= this.targetString.length) {
+                        soundEngine.playWordComplete();
+                        this.showFloatingText('🌟 太棒啦!', '#f59e0b', 32);
+                        this.currentIndex++;
+                        setTimeout(() => this.loadNextWord(), 180);
+                    } else {
+                        this.updateWordDisplay();
+                        this.highlightCurrentTargetKey();
+                    }
+                } else {
+                    // Typo!
+                    this.combo = 0;
+                    soundEngine.playTypo();
+                    this.triggerErrorShake();
+                    this.showFloatingText('❌ 重新试下~', '#ef4444');
+                }
+
+                this.updateStatsUI();
+            }
+
+            showFloatingText(text, color, fontSize = 24) {
+                const stage = document.getElementById('gameStage');
+                const pop = document.createElement('div');
+                pop.className = 'pop-text';
+                pop.style.color = color;
+                pop.style.fontSize = `${fontSize}px`;
+                pop.style.left = `${50 + (Math.random() * 20 - 10)}%`;
+                pop.style.top = `35%`;
+                pop.innerText = text;
+                stage.appendChild(pop);
+                setTimeout(() => pop.remove(), 800);
+            }
+
+            triggerErrorShake() {
+                const stage = document.getElementById('gameStage');
+                stage.classList.remove('shake-screen');
+                void stage.offsetWidth; // force reflow
+                stage.classList.add('shake-screen');
+            }
+
+            updateStatsUI() {
+                // Combo
+                this.comboCount.innerText = this.combo;
+
+                // Accuracy
+                const acc = this.totalKeyStrokes === 0 ? 100 : Math.round((this.correctKeyStrokes / this.totalKeyStrokes) * 100);
+                this.accuracyVal.innerText = `${acc}%`;
+
+                // WPM
+                if (this.startTime && this.correctKeyStrokes > 0) {
+                    const elapsedMin = (Date.now() - this.startTime) / 60000;
+                    if (elapsedMin > 0.05) {
+                        const wordsTyped = this.correctKeyStrokes / 5;
+                        const wpm = Math.round(wordsTyped / elapsedMin);
+                        this.wpmVal.innerText = wpm;
+                    }
+                }
+
+                // Stars rating
+                const star1 = document.getElementById('star1');
+                const star2 = document.getElementById('star2');
+                const star3 = document.getElementById('star3');
+                if (acc >= 90) {
+                    star1.className = 'text-amber-400 text-lg';
+                    star2.className = 'text-amber-400 text-lg';
+                    star3.className = 'text-amber-400 text-lg';
+                } else if (acc >= 75) {
+                    star1.className = 'text-amber-400 text-lg';
+                    star2.className = 'text-amber-400 text-lg';
+                    star3.className = 'text-slate-300 text-lg';
+                } else {
+                    star1.className = 'text-amber-400 text-lg';
+                    star2.className = 'text-slate-300 text-lg';
+                    star3.className = 'text-slate-300 text-lg';
+                }
+            }
+
+            updateProgress() {
+                const current = Math.min(this.currentIndex + 1, this.wordList.length);
+                const total = this.wordList.length;
+                this.progressText.innerText = `${current}/${total}`;
+                const pct = Math.round((this.currentIndex / total) * 100);
+                this.progressBar.style.width = `${pct}%`;
+            }
+
+            triggerVictory() {
+                soundEngine.playFanfare();
+                this.progressBar.style.width = '100%';
+                this.progressText.innerText = `${this.wordList.length}/${this.wordList.length}`;
+
+                const acc = this.totalKeyStrokes === 0 ? 100 : Math.round((this.correctKeyStrokes / this.totalKeyStrokes) * 100);
+                document.getElementById('modalAccuracy').innerText = `${acc}%`;
+                document.getElementById('modalWpm').innerText = `${this.wpmVal.innerText} WPM`;
+                document.getElementById('modalCombo').innerText = `${this.maxCombo} 次`;
+                document.getElementById('modalTotal').innerText = `${this.wordList.length} 个`;
+
+                this.modalVictory.classList.remove('hidden');
+            }
+
+            bindGlobalEvents() {
+                // Physical keyboard listening
+                window.addEventListener('keydown', (e) => {
+                    // Ignore functional meta keys
+                    if (e.key === 'F5' || e.key === 'F12' || e.ctrlKey || e.altKey || e.metaKey) return;
+                    
+                    // Prevent page scroll on Space
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                    }
+
+                    // Key visual reaction
+                    const keyData = KEY_MAP[e.code.toLowerCase()] || KEY_MAP[e.key.toLowerCase()];
+                    if (keyData) {
+                        const elem = document.getElementById(`key-${keyData.id || keyData.key.toLowerCase()}`);
+                        if (elem) {
+                            elem.classList.add('key-active');
+                            setTimeout(() => elem.classList.remove('key-active'), 120);
+                        }
+                    }
+
+                    if (e.key.length === 1) {
+                        this.handleInput(e.key);
+                    }
+                });
+            }
+        }
+
+        let game = null;
+
+        function handleUserCharInput(char) {
+            if (game && char) {
+                game.handleInput(char);
+            }
+        }
+
+        window.onload = function() {
+            renderKeyboard();
+            game = new GameEngine();
+            game.init();
+
+            // Sound Toggle
+            const btnSound = document.getElementById('btnSound');
+            btnSound.addEventListener('click', () => {
+                soundEngine.enabled = !soundEngine.enabled;
+                if (soundEngine.enabled) {
+                    btnSound.innerHTML = `<i class="fas fa-volume-up"></i><span class="hidden sm:inline">音效: 开</span>`;
+                    btnSound.className = "btn-cartoon bg-white text-emerald-600 border-2 border-emerald-400 rounded-xl px-3 py-1.5 font-bold text-sm flex items-center gap-1.5 hover:bg-emerald-50";
+                    soundEngine.playCorrect();
+                } else {
+                    btnSound.innerHTML = `<i class="fas fa-volume-mute"></i><span class="hidden sm:inline">音效: 关</span>`;
+                    btnSound.className = "btn-cartoon bg-slate-100 text-slate-500 border-2 border-slate-300 rounded-xl px-3 py-1.5 font-bold text-sm flex items-center gap-1.5";
+                }
+            });
+
+            // Help Modal
+            const btnHelp = document.getElementById('btnHelp');
+            const modalHelp = document.getElementById('modalHelp');
+            const btnCloseHelp = document.getElementById('btnCloseHelpModal');
+            const btnGotHelp = document.getElementById('btnGotHelp');
+
+            btnHelp.addEventListener('click', () => modalHelp.classList.remove('hidden'));
+            btnCloseHelp.addEventListener('click', () => modalHelp.classList.add('hidden'));
+            btnGotHelp.addEventListener('click', () => modalHelp.classList.add('hidden'));
+
+            // Mode Selection Modal
+            const btnModeSelect = document.getElementById('btnModeSelect');
+            const modalModeSelect = document.getElementById('modalModeSelect');
+            const btnCloseMode = document.getElementById('btnCloseModeModal');
+
+            btnModeSelect.addEventListener('click', () => modalModeSelect.classList.remove('hidden'));
+            btnCloseMode.addEventListener('click', () => modalModeSelect.classList.add('hidden'));
+
+            // Mode cards click
+            document.querySelectorAll('.mode-card').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const mode = btn.getAttribute('data-mode');
+                    modalModeSelect.classList.add('hidden');
+                    game.setMode(mode);
+                });
+            });
+
+            // Victory modal handlers
+            const btnReplay = document.getElementById('btnReplay');
+            const btnNextMode = document.getElementById('btnNextMode');
+            const modalVictory = document.getElementById('modalVictory');
+
+            btnReplay.addEventListener('click', () => {
+                modalVictory.classList.add('hidden');
+                game.setMode(game.currentMode);
+            });
+
+            btnNextMode.addEventListener('click', () => {
+                modalVictory.classList.add('hidden');
+                const modes = ['home-row', 'pinyin', 'english', 'chinese'];
+                const nextIdx = (modes.indexOf(game.currentMode) + 1) % modes.length;
+                game.setMode(modes[nextIdx]);
+            });
+        };
+    </script>
+</body>
+</html>
